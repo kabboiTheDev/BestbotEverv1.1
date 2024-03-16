@@ -1,23 +1,19 @@
-//For 24/7
-const http = require('http');
+const keepAlive = require('./server');
+const Monitor = require('ping-monitor');
 
-const server = http.createServer((req, res) => {
-  res.setHeader('Content-Type', 'text/html');
-  res.end(`
-    <html>
-      <head>
-        <title>Your Web View</title>
-      </head>
-      <body style="margin: 0; padding: 0;">
-        <iframe width="100%" height="100%" src="https://kabboithedev.carrd.co/" frameborder="0" allowfullscreen></iframe>
-      </body>
-    </html>`);
+keepAlive();
+const monitor = new Monitor({
+    website: '',
+    title: 'NAME',
+    interval: 2
 });
 
-server.listen(3000, () => {
-  console.log('Made by kabboi');
-});
-// Thats it
+monitor.on('up', (res) => console.log(`${res.website} its on.`));
+monitor.on('down', (res) => console.log(`${res.website} it has died - ${res.statusMessage}`));
+monitor.on('stop', (website) => console.log(`${website} has stopped.`) );
+monitor.on('error', (error) => console.log(error));
+// thats it
+
 require("dotenv").config();
 require('events').EventEmitter.defaultMaxListeners = 50;
 
